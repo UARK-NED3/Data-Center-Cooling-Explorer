@@ -1,0 +1,17 @@
+# MATLAB editor and generated artifacts
+*.asv
+*.mlx~
+*.fig
+*.mat
+slprj/
+codegen/
+
+# Operating-system and editor artifacts
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local-only release and test output
+release/
+test-results/
