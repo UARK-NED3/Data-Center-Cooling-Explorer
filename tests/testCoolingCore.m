@@ -114,9 +114,11 @@ cleanup = onCleanup(@() deleteIfValid(app.Figure)); %#ok<NASGU>
 verifyTrue(testCase, isvalid(app.Figure));
 verifyTrue(testCase, contains(app.Labels.returnTemperature.Text, 'Liquid-loop return'));
 
+initialRise = app.Labels.coolantRise.Text;
 app.Controls.coolantFlow.Value = 0.40;
 app.Refresh();
 verifyTrue(testCase, contains(app.Labels.coolantRise.Text, 'Coolant temperature rise'));
+verifyNotEqual(testCase, app.Labels.coolantRise.Text, initialRise);
 end
 
 function deleteIfValid(graphicObject)
