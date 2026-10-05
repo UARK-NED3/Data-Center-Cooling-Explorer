@@ -104,3 +104,23 @@ expectedSteady_C = 25 + 5000 * 0.002;
 verifyEqual(testCase, simulation.componentTemperature_C(end), expectedSteady_C, ...
     'AbsTol', 0.01);
 end
+
+function testExplorerLaunchesAndRefreshesAHiddenFigure(testCase)
+projectRoot = fileparts(fileparts(mfilename('fullpath')));
+addpath(projectRoot);
+app = DataCenterCoolingExplorer('Visible', 'off');
+cleanup = onCleanup(@() deleteIfValid(app.Figure)); %#ok<NASGU>
+
+verifyTrue(testCase, isvalid(app.Figure));
+verifyTrue(testCase, contains(app.Labels.returnTemperature.Text, 'Liquid-loop return'));
+
+app.Controls.coolantFlow.Value = 0.40;
+app.Refresh();
+verifyTrue(testCase, contains(app.Labels.coolantRise.Text, 'Coolant temperature rise'));
+end
+
+function deleteIfValid(graphicObject)
+if isvalid(graphicObject)
+    delete(graphicObject);
+end
+end
