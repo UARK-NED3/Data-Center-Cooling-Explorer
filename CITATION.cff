@@ -6,7 +6,7 @@ authors:
   - family-names: Hu
     given-names: Han
 license: Apache-2.0
-version: 0.1.0
+version: 0.1.1
 date-released: 2026-10-05
 repository-code: "https://github.com/UARK-NED3/Data-Center-Cooling-Explorer"
 abstract: "An interactive MATLAB learning experience for synthetic data-center liquid-cooling heat balances and one-node transient thermal response."
