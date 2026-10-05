@@ -106,4 +106,4 @@ Code is released under the Apache License 2.0. See [LICENSE](LICENSE). Cite the 
 
 ## Project status
 
-Version `0.1.0` is the initial public development release. Its heat-balance calculations and MATLAB interface have been tested on MATLAB R2025b. The project has not been independently validated against measured rack data.
+Version `0.1.1` is the current public development release. Its heat-balance calculations and MATLAB interface have been tested on MATLAB R2025b. The project has not been independently validated against measured rack data.
