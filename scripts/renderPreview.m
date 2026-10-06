@@ -3,9 +3,7 @@
 
 projectRoot = fileparts(fileparts(mfilename('fullpath')));
 addpath(projectRoot);
-app = DataCenterCoolingExplorer('Visible', 'off');
-cleanup = onCleanup(@() deleteIfValid(app.Figure)); %#ok<NASGU>
-exportapp(app.Figure, fullfile(projectRoot, 'docs', 'explorer-preview.png'));
+run(fullfile(projectRoot, 'scripts', 'renderContestPreviews.m'));
 
 function deleteIfValid(graphicObject)
 if isvalid(graphicObject)

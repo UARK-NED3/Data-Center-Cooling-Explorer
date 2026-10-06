@@ -126,3 +126,45 @@ if isvalid(graphicObject)
     delete(graphicObject);
 end
 end
+
+function testModeratePresetProvidesAReproducibleTeachingCase(testCase)
+preset = getExplorerPreset('Moderate liquid cooling');
+
+verifyEqual(testCase, preset.itLoad_kW, 10);
+verifyEqual(testCase, preset.liquidCaptureFraction, 0.80, 'AbsTol', 1e-12);
+verifyEqual(testCase, preset.coolantMassFlow_kg_s, 0.20, 'AbsTol', 1e-12);
+verifyEqual(testCase, preset.supplyTemperature_C, 25, 'AbsTol', 1e-12);
+verifyEqual(testCase, preset.thermalResistance_K_kW, 1.5, 'AbsTol', 1e-12);
+verifyTrue(testCase, contains(preset.learningGoal, 'heat partition'));
+end
+
+function testUnknownPresetIsRejected(testCase)
+verifyError(testCase, @() getExplorerPreset('Unknown case'), ...
+    'DataCenterCooling:UnknownPreset');
+end
+
+function testExplorerAppliesNamedPresetAndShowsTeachingCue(testCase)
+projectRoot = fileparts(fileparts(mfilename('fullpath')));
+addpath(projectRoot);
+app = DataCenterCoolingExplorer('Visible', 'off');
+cleanup = onCleanup(@() deleteIfValid(app.Figure)); %#ok<NASGU>
+
+verifyEqual(testCase, app.Controls.itLoad.Value, 10, 'AbsTol', 1e-12);
+app.SelectPreset('Flow-limited loop');
+
+verifyEqual(testCase, app.Controls.preset.Value, 'Flow-limited loop');
+verifyEqual(testCase, app.Controls.itLoad.Value, 20, 'AbsTol', 1e-12);
+verifyEqual(testCase, app.Controls.coolantFlow.Value, 0.08, 'AbsTol', 1e-12);
+verifyTrue(testCase, contains(app.Labels.message.Text, 'Prediction check'));
+verifyTrue(testCase, contains(app.Labels.temperatureCue.Text, 'not a hardware limit'));
+end
+
+function testGuidedLessonLauncherSupportsHiddenVerification(testCase)
+projectRoot = fileparts(fileparts(mfilename('fullpath')));
+explorerVisible = 'off'; %#ok<NASGU>
+run(fullfile(projectRoot, 'ExploreDataCenterCooling.m'));
+cleanup = onCleanup(@() deleteIfValid(app.Figure)); %#ok<NASGU>
+
+verifyTrue(testCase, isvalid(app.Figure));
+verifyEqual(testCase, string(app.Figure.Visible), "off");
+end
