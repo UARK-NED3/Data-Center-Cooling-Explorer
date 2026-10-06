@@ -33,7 +33,7 @@ All inputs are synthetic and are included only for education. This package is no
 
 ## Verification statement
 
-Version 0.2.0 passed 11 automated MATLAB R2025b tests, including heat-balance reconstruction, limiting cases, transient conservation, preset selection, the interactive refresh path, and the guided lesson launcher. The release archive will be tested from a clean extraction before publication.
+Version 0.2.0 passed 11 automated MATLAB R2025b tests, including heat-balance reconstruction, limiting cases, transient conservation, preset selection, the interactive refresh path, and the guided lesson launcher. The v0.2.0 archive also passed the same tests from a clean extraction.
 
 ## Project link
 
