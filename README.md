@@ -24,10 +24,18 @@ Tested with MATLAB R2025b. Only base MATLAB is required; Simscape and Simscape F
 
 ```matlab
 cd('Data-Center-Cooling-Explorer')
-DataCenterCoolingExplorer
+ExploreDataCenterCooling
 ```
 
-Move the sliders, then interpret the four panels:
+The guided entry point frames a prediction task and launches the app. If desired, open `ExploreDataCenterCooling.m` in MATLAB and use **Open as Live Script** to view its publishing markup as a Live Editor narrative.
+
+Start with **Moderate liquid cooling**, then compare it with the other named synthetic cases:
+
+- **Flow-limited loop:** Lower coolant flow at the same liquid heat partition. Predict which output changes before viewing the result.
+- **High-density stress test:** A deliberately demanding case that displays a caution when the assumed one-node component temperature is high.
+- **Custom slider values:** Change one slider at a time after forming a prediction.
+
+The app presents four coordinated views:
 
 1. **Heat path** partitions IT heat between a declared liquid-capture fraction and a residual air path.
 2. **Transient response** applies a workload step at 60 s to a component with a lumped thermal capacitance.
@@ -65,6 +73,8 @@ $$
 
 The return temperature follows from $Q_{\mathrm{to\ coolant}}=\dot{m}c_p(T_{\mathrm{return}}-T_{\mathrm{supply}})$. The code solves this ordinary differential equation with `ode45` and computes the energy residual directly from the governing equation.
 
+The transient lesson fixes the effective thermal capacitance at $30\ \mathrm{kJ\,K^{-1}}$. The temperature cue is a teaching prompt: it flags a high value produced by the selected assumptions, not an equipment-temperature limit or a safety rating.
+
 ### Explicit exclusions
 
 The model does **not** resolve rack geometry, multiple servers, spatial hotspots, manifold flow distribution, cold-plate performance, pressure drop, pump power, heat-exchanger effectiveness, facility controls, water use, reliability, or measurement uncertainty. Do not use it for equipment selection, operational decisions, or a claim of empirical validation.
@@ -98,7 +108,7 @@ run('scripts/renderPreview.m')
 
 ## Contest release plan
 
-The MATLAB Central File Exchange package will contain the tested source, this README, a release note, and synthetic inputs only. The File Exchange entry will use the contest tag `25yrcontest` and link back to this repository.
+The MATLAB Central File Exchange package will contain the tested source, this README, a release note, and synthetic inputs only. The File Exchange entry will use the contest tag `25yrcontest` and link back to this repository. The proposed title, description, tags, and verification statement are in [docs/FILE_EXCHANGE_LISTING.md](docs/FILE_EXCHANGE_LISTING.md).
 
 ## License and attribution
 
@@ -106,4 +116,4 @@ Code is released under the Apache License 2.0. See [LICENSE](LICENSE). Cite the 
 
 ## Project status
 
-Version `0.1.1` is the current public development release. Its heat-balance calculations and MATLAB interface have been tested on MATLAB R2025b. The project has not been independently validated against measured rack data.
+Version `0.2.0` is the current public development release. Its heat-balance calculations and MATLAB interface have been tested on MATLAB R2025b. The project has not been independently validated against measured rack data.
