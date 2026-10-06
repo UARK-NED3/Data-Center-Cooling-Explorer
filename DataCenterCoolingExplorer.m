@@ -13,6 +13,8 @@ parse(parser, varargin{:});
 
 projectRoot = fileparts(mfilename('fullpath'));
 addpath(fullfile(projectRoot, 'src'));
+defaultPreset = getExplorerPreset('Moderate liquid cooling');
+currentLearningGoal = defaultPreset.learningGoal;
 
 colors = struct( ...
     'navy', [0.05 0.16 0.29], ...
@@ -24,7 +26,7 @@ colors = struct( ...
 
 figureHandle = uifigure( ...
     'Name', 'Data Center Cooling Explorer', ...
-    'Position', [80 80 1420 800], ...
+    'Position', [80 60 1420 860], ...
     'Color', [0.97 0.98 0.99], ...
     'Visible', parser.Results.Visible);
 
@@ -59,44 +61,58 @@ controlPanel = uipanel(root, ...
     'BackgroundColor', 'white');
 controlPanel.Layout.Row = 2;
 controlPanel.Layout.Column = 1;
-controlGrid = uigridlayout(controlPanel, [12 1]);
-controlGrid.RowHeight = {24, 44, 24, 44, 24, 44, 24, 44, 24, 44, 28, '1x'};
+controlGrid = uigridlayout(controlPanel, [14 1]);
+controlGrid.RowHeight = {22, 30, 24, 44, 24, 44, 24, 44, 24, 44, 24, 44, 66, '1x'};
 controlGrid.Padding = [14 10 14 12];
 
 controls = struct();
-controls.itLoad = addSlider(controlGrid, 1, 'IT heat load [kW]', [1 100], 25, ...
+valueLabels = struct();
+presetNames = {'Moderate liquid cooling', 'Flow-limited loop', ...
+    'High-density stress test', 'Custom slider values'};
+presetLabel = uilabel(controlGrid, 'Text', 'Start with a teaching scenario', ...
+    'FontWeight', 'bold', 'FontSize', 12);
+presetLabel.Layout.Row = 1;
+controls.preset = uidropdown(controlGrid, 'Items', presetNames, ...
+    'Value', defaultPreset.name, 'Tooltip', ...
+    'Named synthetic cases support an intentional comparison.');
+controls.preset.Layout.Row = 2;
+[controls.itLoad, valueLabels.itLoad] = addSlider(controlGrid, 3, 'IT heat load [kW]', [1 100], defaultPreset.itLoad_kW, ...
     'Each watt of IT power is treated as heat in this lesson.');
-controls.liquidCapture = addSlider(controlGrid, 3, 'Liquid heat capture [-]', [0 1], 0.80, ...
+[controls.liquidCapture, valueLabels.liquidCapture] = addSlider(controlGrid, 5, 'Liquid heat capture [-]', [0 1], defaultPreset.liquidCaptureFraction, ...
     'Fraction of IT heat routed from the component to the liquid loop.');
-controls.coolantFlow = addSlider(controlGrid, 5, 'Coolant mass flow [kg/s]', [0.05 0.50], 0.20, ...
+[controls.coolantFlow, valueLabels.coolantFlow] = addSlider(controlGrid, 7, 'Coolant mass flow [kg/s]', [0.05 0.50], defaultPreset.coolantMassFlow_kg_s, ...
     'Mass flow through the liquid loop; pressure drop is not modeled.');
-controls.supplyTemperature = addSlider(controlGrid, 7, 'Coolant supply temperature [degC]', [15 35], 25, ...
+[controls.supplyTemperature, valueLabels.supplyTemperature] = addSlider(controlGrid, 9, 'Coolant supply temperature [degC]', [15 35], defaultPreset.supplyTemperature_C, ...
     'Fixed upstream supply temperature for the one-node transient model.');
-controls.thermalResistance = addSlider(controlGrid, 9, 'Component-to-coolant resistance [K/kW]', [0.5 6], 3, ...
+[controls.thermalResistance, valueLabels.thermalResistance] = addSlider(controlGrid, 11, 'Component-to-coolant resistance [K/kW]', [0.5 6], defaultPreset.thermalResistance_K_kW, ...
     'A synthetic effective resistance; not a cold-plate specification.');
+
+scenarioText = uilabel(controlGrid, 'WordWrap', 'on', 'FontSize', 11, ...
+    'FontColor', colors.navy, 'VerticalAlignment', 'top');
+scenarioText.Layout.Row = 13;
 
 notePanel = uipanel(controlGrid, 'Title', '2. Read the model scope', ...
     'FontWeight', 'bold', 'BackgroundColor', [0.96 0.98 1.00]);
-notePanel.Layout.Row = 12;
+notePanel.Layout.Row = 14;
 noteGrid = uigridlayout(notePanel, [2 1]);
-noteGrid.RowHeight = {72, '1x'};
+noteGrid.RowHeight = {48, '1x'};
 noteGrid.Padding = [8 4 8 6];
 scopeText = uilabel(noteGrid, ...
-    'Text', {'Included: heat partition, Q = m_dot c_p DeltaT, thermal resistance,', ...
-             'and component thermal storage.'}, ...
-    'FontSize', 11, 'FontColor', colors.navy, 'VerticalAlignment', 'top');
+    'Text', {'Included: heat partition, Q = m_dot c_p DeltaT, effective resistance,', ...
+             'and one-node storage (fixed at 30 kJ/K).'}, ...
+    'FontSize', 10, 'FontColor', colors.navy, 'VerticalAlignment', 'top');
 scopeText.Layout.Row = 1;
 limitsText = uilabel(noteGrid, ...
-    'Text', {'Not established: a specific rack, cold plate, pump, pressure drop,', ...
-             'hotspots, controls, sensor uncertainty, or operational performance.'}, ...
-    'FontSize', 11, 'FontColor', colors.red, 'VerticalAlignment', 'top');
+    'Text', {'Excluded: geometry, flow distribution, pressure drop, controls, sensors,', ...
+             'and any claim for a particular hardware system.'}, ...
+    'FontSize', 10, 'FontColor', colors.red, 'VerticalAlignment', 'top');
 limitsText.Layout.Row = 2;
 
 viewPanel = uipanel(root, 'BorderType', 'none', 'BackgroundColor', [0.97 0.98 0.99]);
 viewPanel.Layout.Row = 2;
 viewPanel.Layout.Column = 2;
 viewGrid = uigridlayout(viewPanel, [3 2]);
-viewGrid.RowHeight = {'1x', '1x', 74};
+viewGrid.RowHeight = {'1x', '1x', 108};
 viewGrid.ColumnWidth = {'1x', '1x'};
 viewGrid.Padding = [0 0 0 0];
 viewGrid.RowSpacing = 10;
@@ -120,23 +136,39 @@ outputPanel = uipanel(viewGrid, ...
     'FontWeight', 'bold', 'BackgroundColor', 'white');
 outputPanel.Layout.Row = 3;
 outputPanel.Layout.Column = [1 2];
-outputGrid = uigridlayout(outputPanel, [1 4]);
+outputGrid = uigridlayout(outputPanel, [2 4]);
+outputGrid.RowHeight = {28, '1x'};
 outputGrid.ColumnWidth = {'1x', '1x', '1x', '1.9x'};
 outputGrid.Padding = [12 3 12 3];
 labels = struct();
 labels.returnTemperature = uilabel(outputGrid, 'FontWeight', 'bold', ...
     'FontColor', colors.blue, 'FontSize', 13);
+labels.returnTemperature.Layout.Row = 1;
+labels.returnTemperature.Layout.Column = 1;
 labels.coolantRise = uilabel(outputGrid, 'FontWeight', 'bold', ...
     'FontColor', colors.blue, 'FontSize', 13);
+labels.coolantRise.Layout.Row = 1;
+labels.coolantRise.Layout.Column = 2;
 labels.balance = uilabel(outputGrid, 'FontWeight', 'bold', ...
     'FontColor', colors.gray, 'FontSize', 13);
+labels.balance.Layout.Row = 1;
+labels.balance.Layout.Column = 3;
 labels.message = uilabel(outputGrid, 'FontSize', 12, ...
     'FontColor', colors.navy, 'WordWrap', 'on');
+labels.message.Layout.Row = [1 2];
+labels.message.Layout.Column = 4;
+labels.temperatureCue = uilabel(outputGrid, 'FontSize', 11, ...
+    'FontColor', colors.red, 'WordWrap', 'on');
+labels.temperatureCue.Layout.Row = 2;
+labels.temperatureCue.Layout.Column = [1 3];
 
-sliderFields = fieldnames(controls);
+sliderFields = {'itLoad', 'liquidCapture', 'coolantFlow', 'supplyTemperature', 'thermalResistance'};
 for fieldIndex = 1:numel(sliderFields)
-    controls.(sliderFields{fieldIndex}).ValueChangedFcn = @(~, ~) refresh();
+    fieldName = sliderFields{fieldIndex};
+    controls.(fieldName).ValueChangingFcn = @(source, event) updateValueLabel(fieldName, event.Value);
+    controls.(fieldName).ValueChangedFcn = @(~, ~) refreshFromSlider();
 end
+controls.preset.ValueChangedFcn = @(source, ~) applyPresetByName(source.Value);
 
 app = struct( ...
     'Figure', figureHandle, ...
@@ -144,16 +176,62 @@ app = struct( ...
     'Axes', struct('heatPath', axesHeatPath, 'temperature', axesTemperature, ...
         'partition', axesPartition, 'balance', axesBalance), ...
     'Labels', labels, ...
-    'Refresh', @refresh);
+    'ValueLabels', valueLabels, ...
+    'Refresh', @refresh, ...
+    'SelectPreset', @applyPresetByName);
 refresh();
 
-    function slider = addSlider(parent, row, labelText, limits, defaultValue, tooltipText)
-        label = uilabel(parent, 'Text', labelText, 'FontWeight', 'bold', ...
+    function [slider, valueLabel] = addSlider(parent, row, labelText, limits, defaultValue, tooltipText)
+        labelGrid = uigridlayout(parent, [1 2]);
+        labelGrid.Layout.Row = row;
+        labelGrid.ColumnWidth = {'1x', 85};
+        labelGrid.Padding = [0 0 0 0];
+        labelGrid.ColumnSpacing = 4;
+        label = uilabel(labelGrid, 'Text', labelText, 'FontWeight', 'bold', ...
             'FontSize', 12, 'Tooltip', tooltipText);
-        label.Layout.Row = row;
+        valueLabel = uilabel(labelGrid, 'FontSize', 11, ...
+            'HorizontalAlignment', 'right', 'FontColor', colors.blue);
         slider = uislider(parent, 'Limits', limits, 'Value', defaultValue, ...
             'MajorTicks', linspace(limits(1), limits(2), 5), 'Tooltip', tooltipText);
         slider.Layout.Row = row + 1;
+    end
+
+    function refreshFromSlider()
+        controls.preset.Value = 'Custom slider values';
+        currentLearningGoal = ['Change one slider at a time. Predict the direction of the response ', ...
+            'before reading the plots.'];
+        refresh();
+    end
+
+    function applyPresetByName(presetName)
+        if strcmp(presetName, 'Custom slider values')
+            refreshFromSlider();
+            return
+        end
+        preset = getExplorerPreset(presetName);
+        controls.preset.Value = preset.name;
+        controls.itLoad.Value = preset.itLoad_kW;
+        controls.liquidCapture.Value = preset.liquidCaptureFraction;
+        controls.coolantFlow.Value = preset.coolantMassFlow_kg_s;
+        controls.supplyTemperature.Value = preset.supplyTemperature_C;
+        controls.thermalResistance.Value = preset.thermalResistance_K_kW;
+        currentLearningGoal = preset.learningGoal;
+        refresh();
+    end
+
+    function updateValueLabel(fieldName, value)
+        switch fieldName
+            case 'itLoad'
+                valueLabels.itLoad.Text = sprintf('%.1f kW', value);
+            case 'liquidCapture'
+                valueLabels.liquidCapture.Text = sprintf('%.0f %%', 100 * value);
+            case 'coolantFlow'
+                valueLabels.coolantFlow.Text = sprintf('%.3f kg/s', value);
+            case 'supplyTemperature'
+                valueLabels.supplyTemperature.Text = sprintf('%.1f degC', value);
+            case 'thermalResistance'
+                valueLabels.thermalResistance.Text = sprintf('%.2f K/kW', value);
+        end
     end
 
     function refresh()
@@ -180,6 +258,13 @@ refresh();
                 baseLoad_W * input.liquidCaptureFraction * resistance_K_W);
         transient = simulateComponentTransient(parameters, time_s, itLoad_W);
 
+        updateValueLabel('itLoad', controls.itLoad.Value);
+        updateValueLabel('liquidCapture', controls.liquidCapture.Value);
+        updateValueLabel('coolantFlow', controls.coolantFlow.Value);
+        updateValueLabel('supplyTemperature', controls.supplyTemperature.Value);
+        updateValueLabel('thermalResistance', controls.thermalResistance.Value);
+        scenarioText.Text = sprintf('Try this: %s\n%s', controls.preset.Value, currentLearningGoal);
+
         drawHeatPath(axesHeatPath, steady, colors);
         drawTemperaturePlot(axesTemperature, transient, colors);
         drawPartitionPlot(axesPartition, steady, colors);
@@ -191,10 +276,20 @@ refresh();
             steady.coolantDeltaT_K);
         labels.balance.Text = sprintf('Steady energy residual\n%.2e W', ...
             steady.energyResidual_W);
-        labels.message.Text = sprintf(['At %.0f kW, the liquid loop carries %.0f%% of the heat. ', ...
-            'The plots show what follows from declared assumptions; measured topology and ', ...
-            'sensor metadata are still required to validate a real rack.'], ...
+        labels.message.Text = sprintf(['Prediction check: at %.0f kW, the liquid loop carries %.0f%% of the heat. ', ...
+            'Lowering flow raises liquid temperature rise but does not change the declared heat split.'], ...
             input.itLoad_W / 1000, 100 * input.liquidCaptureFraction);
+        steadyComponentTemperature_C = input.supplyTemperature_C + ...
+            input.itLoad_W * input.liquidCaptureFraction * resistance_K_W;
+        if steadyComponentTemperature_C >= 85
+            labels.temperatureCue.Text = sprintf(['Caution: the one-node steady component estimate is %.0f degC. ', ...
+                'This is a visual cue to re-examine assumed resistance and flow, not a hardware limit.'], ...
+                steadyComponentTemperature_C);
+        else
+            labels.temperatureCue.Text = sprintf(['One-node steady component estimate: %.0f degC. ', ...
+                'This illustrative temperature is not a hardware limit.'], ...
+                steadyComponentTemperature_C);
+        end
     end
 end
 
@@ -253,8 +348,10 @@ axisHandle.XTickLabel = {'Liquid loop', 'Air path'};
 ylabel(axisHandle, 'Heat rate [kW]');
 title(axisHandle, 'Declared heat partition', 'FontWeight', 'bold');
 grid(axisHandle, 'on');
+upperLimit_kW = max(1, 1.22 * max(bars.YData));
+ylim(axisHandle, [0 upperLimit_kW]);
 for index = 1:2
-    text(axisHandle, index, bars.YData(index), sprintf('%.1f', bars.YData(index)), ...
+    text(axisHandle, index, 1.04 * bars.YData(index), sprintf('%.1f', bars.YData(index)), ...
         'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom', 'FontWeight', 'bold');
 end
 end
