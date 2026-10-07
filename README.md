@@ -1,5 +1,6 @@
 # Data Center Cooling Explorer
 
+[![MATLAB tests](https://github.com/UARK-NED3/Data-Center-Cooling-Explorer/actions/workflows/matlab-tests.yml/badge.svg)](https://github.com/UARK-NED3/Data-Center-Cooling-Explorer/actions/workflows/matlab-tests.yml)
 [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=UARK-NED3/Data-Center-Cooling-Explorer&file=ExploreDataCenterCooling.m)
 
 Every watt of IT power becomes heat. In a liquid-cooled rack, that heat must cross from a component into a coolant stream and leave the rack with it. This MATLAB live script and app teach what sets the coolant and component temperatures: the steady energy balance, the second law, the thermal resistance between the component and the coolant, and the component's thermal storage. Learners predict how an output will change before each scenario loads, then compare the prediction with the model.
