@@ -2,10 +2,10 @@
 
 Use this checklist before a public GitHub or MATLAB Central File Exchange release.
 
-- [ ] Run `addpath('tests'); runTests` in a clean MATLAB R2025b session.
+- [ ] Confirm that the MATLAB R2023a and R2025b CI matrix is green. Run `addpath('tests'); runTests` in a clean locally available MATLAB release when practical.
 - [ ] Open `ExploreDataCenterCooling.m` in the Live Editor (R2025a or later). Confirm that the formatted text, equations, and the coolant-flow slider in Section 2 render, and that moving the slider reruns the section.
 - [ ] Click the README's **Open in MATLAB Online** badge and confirm that the live script opens and runs.
-- [ ] Run `scripts/renderPreview.m` and inspect the four generated images and the animated demo.
+- [ ] Run the manual **Render release previews** workflow and inspect the four generated images and animated demo in its `release-previews` artifact.
 - [ ] Confirm that the package contains no licensed, operational, vendor, or third-party telemetry.
 - [ ] Confirm that every displayed parameter is labeled as synthetic, assumed, or derived.
 - [ ] Confirm that documentation retains the non-validation and non-design-use limitation.

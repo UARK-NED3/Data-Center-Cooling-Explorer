@@ -18,6 +18,8 @@ The guided live script builds the answer in five steps: why liquids carry heat w
 
 The interactive Explorer then turns each idea into a prediction. Learners choose a scenario, commit to Rise, Fall, or Stay the same for one output, and only then see the scenario load, with an explanation of the computed change. Every view updates while a slider is dragged: the heat path, the transient response with its time constant, steady temperatures across the full flow range, and where the transient heat goes.
 
+An included instructor guide provides four learning objectives, a suggested 15–20 minute classroom sequence, the misconceptions targeted by each scenario, and a transfer question for connecting the synthetic lesson to physical-rack measurements.
+
 All inputs are synthetic and included only for education. The package is not a calibrated rack, cold-plate, CDU, pump, or facility model; do not use it for equipment selection or operational decisions.
 
 ## Suggested domain

@@ -1,5 +1,5 @@
 % Data Center Cooling Explorer
-% Version 0.3.0 (2026-10-06)
+% Version 0.3.1 (2026-10-06)
 %
 % Files
 %   ExploreDataCenterCooling       - Guided lesson (plain-text live script).
@@ -12,6 +12,8 @@
 %   scripts/renderPreview          - Regenerate the README and listing images.
 %   scripts/renderDemoAnimation    - Regenerate the animated README demo.
 %   tests/runTests                 - Run the automated verification tests.
+%   docs/INSTRUCTOR_GUIDE.md        - Suggested 15-20 minute classroom use.
+%   CONTRIBUTING.md                 - Contribution and verification guidance.
 %
 % The models are educational and assumption-driven. They are not calibrated
 % predictions for a particular rack, cold plate, CDU, or facility.
