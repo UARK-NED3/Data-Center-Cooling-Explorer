@@ -1,87 +1,104 @@
 # Data Center Cooling Explorer
 
-An interactive MATLAB learning experience that connects IT heat load to liquid-loop heat capture, coolant temperature rise, component thermal storage, and model evidence needs.
+[![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=UARK-NED3/Data-Center-Cooling-Explorer&file=ExploreDataCenterCooling.m)
 
-![Data Center Cooling Explorer interface](docs/explorer-preview.png)
+Every watt of IT power becomes heat. In a liquid-cooled rack, that heat must cross from a component into a coolant stream and leave the rack with it. This MATLAB live script and app teach what sets the coolant and component temperatures: the steady energy balance, the second law, the thermal resistance between the component and the coolant, and the component's thermal storage. Learners predict how an output will change before each scenario loads, then compare the prediction with the model.
 
-> **Scope and evidence.** This repository contains a synthetic, assumption-driven lesson. It is not a calibrated data-center rack, cold-plate, CDU, pump, or facility model. It contains no licensed inventory records, operational telemetry, or vendor data.
+![Data Center Cooling Explorer after a learner predicts the flow-limited case](docs/flow-limited-loop-preview.png)
 
-## Why this exists
-
-A liquid-cooling calculation can satisfy the familiar heat balance
-
-$$
-Q_{\mathrm{liquid}}=\dot{m}c_p\left(T_{\mathrm{return}}-T_{\mathrm{supply}}\right)
-$$
-
-without establishing that it predicts a real rack. The Explorer lets users vary declared inputs and see what follows from the governing energy balance. It also makes the missing evidence visible: rack topology, component/cold-plate configuration, flow distribution, pressure drop, sensor definitions, uncertainty, and operating conditions are necessary before a model can be validated against a physical system.
-
-The project is an educational companion to the [Data Center Cooling Research Tools](https://github.com/UARK-NED3/Data-Center-Cooling-Research-Tools) hub and its synthetic benchmark cases. It is intentionally narrower than that hub: this repository teaches a physical idea through an interactive MATLAB experience.
+> **Scope.** All inputs are synthetic, declared assumptions chosen for teaching. The model is a one-node lesson, not a calibrated rack, cold-plate, CDU, pump, or facility model, and the repository contains no licensed inventory records, operational telemetry, or vendor data.
 
 ## Quick start
 
-Tested with MATLAB R2025b. Only base MATLAB is required; Simscape and Simscape Fluids are not required.
+Click **Open in MATLAB Online** above, or clone the repository and run:
 
 ```matlab
 cd('Data-Center-Cooling-Explorer')
-ExploreDataCenterCooling
+open ExploreDataCenterCooling   % guided lesson (live script)
+DataCenterCoolingExplorer       % or launch the interactive app directly
 ```
 
-The guided entry point frames a prediction task and launches the app. If desired, open `ExploreDataCenterCooling.m` in MATLAB and use **Open as Live Script** to view its publishing markup as a Live Editor narrative.
+Only base MATLAB is required; Simscape and other toolboxes are not used. The automated tests pass in MATLAB R2025b and R2023a. The guided lesson is saved in the plain-text live-script format introduced in R2025a, so it opens with formatted text, equations, and an embedded slider in R2025a or later, including MATLAB Online. Earlier releases read the same file as an ordinary script whose narrative markup is comments; the R2023a test run executes it end to end.
 
-Start with **Moderate liquid cooling**, then compare it with the other named synthetic cases:
+## What learners do
 
-- **Flow-limited loop:** Lower coolant flow at the same liquid heat partition. Predict which output changes before viewing the result.
-- **High-density stress test:** A deliberately demanding case that displays a caution when the assumed one-node component temperature is high.
-- **Custom slider values:** Change one slider at a time after forming a prediction.
+### Guided live script: `ExploreDataCenterCooling.m`
 
-The app presents four coordinated views:
+1. **Why carry the heat in a liquid?** Compare the volume flows of water and air that carry 10 kW with a 10 K temperature rise.
+2. **The energy balance sets the coolant temperature rise.** An embedded slider moves the operating point along $\Delta T = Q_{\mathrm{liquid}}/(\dot{m}c_p)$. The section ends with a prediction: does lower flow make the component hotter?
+3. **A model that balances energy and still fails.** A shortcut that references the component's thermal resistance to the supply temperature closes the energy balance exactly, yet at low flow it predicts coolant leaving hotter than the component that heats it.
+4. **Let the coolant warm along the wall.** A wall-coupled (effectiveness–NTU) model restores the second law and answers the prediction.
+5. **Thermal storage sets the response time.** A workload step reveals the time constant $\tau = R_{\mathrm{eff}}C_{\mathrm{th}}$.
+6. **Predict, test, and explain** in the interactive Explorer.
+7. **Transfer question:** which measurements would be needed before comparing the model with a physical rack, and what a matching return temperature would and would not confirm.
 
-1. **Heat path** partitions IT heat between a declared liquid-capture fraction and a residual air path.
-2. **Transient response** applies a workload step at 60 s to a component with a lumped thermal capacitance.
-3. **Declared heat partition** reports the steady heat-rate split.
-4. **Where transient heat goes** distinguishes instantaneous heat routed to the loop, heat transferred to coolant, and temporary component energy storage.
+### Interactive Explorer: `DataCenterCoolingExplorer.m`
+
+Choose a scenario from the menu. The Explorer asks for a prediction (**Rise**, **Fall**, or **Stay the same**), loads the scenario only after the learner commits, and then explains the change it computes relative to the baseline.
+
+| Scenario | Change from the baseline | Quantity to predict |
+|---|---|---|
+| Moderate liquid cooling | Baseline: 10 kW, 80% liquid capture, 0.20 kg/s, 25 °C supply, 1.5 K/kW | — |
+| Flow-limited loop | Coolant flow 0.20 → 0.08 kg/s only | Steady component temperature |
+| Lower thermal resistance | Component-to-coolant resistance 1.5 → 0.75 K/kW only | Liquid-loop return temperature |
+| High-density stress test | 40 kW, 90% liquid capture, 0.25 kg/s, 2.0 K/kW | Heat left for the room-air path |
+
+Every view updates while a slider is dragged:
+
+1. **Heat path** splits IT heat between the liquid loop and room air, with arrow width proportional to heat rate.
+2. **Transient response** to a workload step at 60 s, with the time constant marked on the component curve.
+3. **Steady temperatures across coolant flow** show the component and return temperatures for the full flow range, with the current operating point marked and a 1-atm boiling reference when it is in range.
+4. **Where the transient heat goes** separates heat entering the liquid path, heat removed by the coolant, and the component's storage rate.
+
+A cue line beneath the readouts reports a second-law check, a caution when the one-node component estimate reaches 85 °C, or a warning when the coolant return reaches 100 °C, where water at atmospheric pressure would boil and the single-phase model no longer applies.
 
 ## Model
 
-All calculations use SI units, except displayed temperatures in degrees Celsius. The synthetic coolant is assigned a constant specific heat capacity of $4180\ \mathrm{J\,kg^{-1}\,K^{-1}}$, representative of liquid water over a limited temperature range. This is an illustrative property choice, not a fluid-property model.
+All calculations use SI units; displayed temperatures are in degrees Celsius. The synthetic coolant has a constant specific heat capacity of $4180\ \mathrm{J\,kg^{-1}\,K^{-1}}$, representative of liquid water over a limited temperature range, and the component has an effective thermal capacitance of $30\ \mathrm{kJ\,K^{-1}}$. Both are illustrative choices, not property or hardware models.
 
 ### Steady liquid-loop accounting
 
-For IT heat load $Q_{\mathrm{IT}}$ and user-selected liquid heat-capture fraction $f_{\mathrm{liquid}}$,
+For IT heat load $Q_{\mathrm{IT}}$ and declared liquid heat-capture fraction $f_{\mathrm{liquid}}$,
 
 $$
 Q_{\mathrm{liquid}}=f_{\mathrm{liquid}}Q_{\mathrm{IT}}, \qquad
-Q_{\mathrm{air}}=(1-f_{\mathrm{liquid}})Q_{\mathrm{IT}}.
+Q_{\mathrm{air}}=(1-f_{\mathrm{liquid}})Q_{\mathrm{IT}}, \qquad
+T_{\mathrm{return}}-T_{\mathrm{supply}} = \frac{Q_{\mathrm{liquid}}}{\dot{m}c_p}.
 $$
 
-The liquid-loop temperature rise is
+### Component-to-coolant coupling
+
+The component is a uniform-temperature wall that heats the coolant as it flows past. With wall conductance $UA = 1/R_{\mathrm{th}}$,
 
 $$
-\Delta T_{\mathrm{coolant}} = \frac{Q_{\mathrm{liquid}}}{\dot{m}c_p}.
+\mathrm{NTU}=\frac{UA}{\dot{m}c_p}, \qquad
+\varepsilon = 1-e^{-\mathrm{NTU}}, \qquad
+R_{\mathrm{eff}}=\frac{1}{\varepsilon\,\dot{m}c_p}, \qquad
+T_{\mathrm{component}} = T_{\mathrm{supply}} + Q_{\mathrm{liquid}}R_{\mathrm{eff}}.
 $$
+
+This is the standard heat-exchanger result for one stream heated by a wall at uniform temperature. Because $\varepsilon \le 1$, the return temperature cannot exceed the component temperature. At high flow, $R_{\mathrm{eff}} \to R_{\mathrm{th}}$; as $R_{\mathrm{th}} \to 0$, $R_{\mathrm{eff}} \to 1/(\dot{m}c_p)$ and the coolant leaves at the component temperature.
 
 ### Transient component model
 
-The lesson uses one component temperature state coupled to a fixed-temperature coolant supply:
-
 $$
-C_{\mathrm{th}}\frac{dT_{\mathrm{component}}}{dt} = Q_{\mathrm{liquid}} - Q_{\mathrm{to\ coolant}},
-\qquad
-Q_{\mathrm{to\ coolant}} = \frac{T_{\mathrm{component}}-T_{\mathrm{supply}}}{R_{\mathrm{th}}}.
+C_{\mathrm{th}}\frac{dT_{\mathrm{component}}}{dt} = Q_{\mathrm{liquid}}(t) - \frac{T_{\mathrm{component}}-T_{\mathrm{supply}}}{R_{\mathrm{eff}}}, \qquad
+\tau = R_{\mathrm{eff}}C_{\mathrm{th}}.
 $$
 
-The return temperature follows from $Q_{\mathrm{to\ coolant}}=\dot{m}c_p(T_{\mathrm{return}}-T_{\mathrm{supply}})$. The code solves this ordinary differential equation with `ode45` and computes the energy residual directly from the governing equation.
+The IT load is held constant between time samples, so the code evaluates the exact exponential solution on each interval rather than integrating numerically. The coolant is treated as quasi-steady (its own heat capacity is neglected), and the return temperature follows from the instantaneous heat transferred to it.
 
-The transient lesson fixes the effective thermal capacitance at $30\ \mathrm{kJ\,K^{-1}}$. The temperature cue is a teaching prompt: it flags a high value produced by the selected assumptions, not an equipment-temperature limit or a safety rating.
+### Correction in version 0.3.0
+
+Versions 0.1.0 through 0.2.0 computed $T_{\mathrm{component}} = T_{\mathrm{supply}} + Q_{\mathrm{liquid}}R_{\mathrm{th}}$, referencing the resistance to the supply temperature. That shortcut closes the energy balance, but it makes the component temperature independent of coolant flow, and for flows below $1/(R_{\mathrm{th}}c_p)$ (about 0.16 kg/s at 1.5 K/kW) it predicts coolant leaving hotter than the component. The v0.2.0 flow-limited scenario showed a 72.8 °C return from a 49.0 °C component. The live script now uses this shortcut as the counterexample in Section 3.
 
 ### Explicit exclusions
 
-The model does **not** resolve rack geometry, multiple servers, spatial hotspots, manifold flow distribution, cold-plate performance, pressure drop, pump power, heat-exchanger effectiveness, facility controls, water use, reliability, or measurement uncertainty. Do not use it for equipment selection, operational decisions, or a claim of empirical validation.
+The model does **not** resolve rack geometry, multiple servers, spatial hotspots, manifold flow distribution, cold-plate performance, pressure drop, pump power, facility controls, water use, reliability, or measurement uncertainty. The 85 °C cue is a teaching prompt, not an equipment limit, and the 100 °C boiling reference applies to water at atmospheric pressure; pressurized loops boil at higher temperatures. Do not use the model for equipment selection, operational decisions, or a claim of empirical validation.
 
 ## Verification
 
-Run the tested baseline from the MATLAB command window:
+Run the automated tests from the MATLAB command window:
 
 ```matlab
 cd('Data-Center-Cooling-Explorer')
@@ -89,31 +106,29 @@ addpath('tests')
 runTests
 ```
 
-The test suite checks:
+The 24 tests check:
 
-- steady heat partition and $\dot{m}c_p\Delta T$ reconstruction;
-- the inverse relation between coolant flow and temperature rise;
-- the zero-liquid-capture limiting case;
-- invalid-input rejection;
-- transient energy conservation; and
-- the one-node model’s analytical steady-temperature limit.
+- the steady heat partition, coolant temperature rise, inverse flow relation, zero-capture limit, and invalid-input rejection;
+- that the return temperature stays below the component temperature across a grid of loads, flows, and resistances, including the former v0.2.0 flow-limited case;
+- the effectiveness–NTU relation, its high-flow and negligible-resistance limits, the monotonic fall of component temperature with flow, and the unchanged return temperature when only the resistance changes;
+- the exact transient solution against an independent `ode45` integration, the integrated energy balance, and the 63% rise after one time constant;
+- that the controlled scenarios change exactly one input and that every prediction answer agrees with the model; and
+- the app (launch, live slider updates, the prediction gate, feedback on an incorrect prediction, the caution and boiling cues, and legend contents) and an end-to-end run of the live script.
 
-## Reproducible preview
+These tests verify the code against its own governing equations. They do not validate the model against measured rack data.
 
-To regenerate the README image from the current code:
+## Reproducible previews
+
+To regenerate the four images in `docs/` from the current code:
 
 ```matlab
 run('scripts/renderPreview.m')
 ```
 
-## Contest release plan
-
-The MATLAB Central File Exchange package will contain the tested source, this README, a release note, and synthetic inputs only. The File Exchange entry will use the contest tag `25yrcontest` and link back to this repository. The proposed title, description, tags, and verification statement are in [docs/FILE_EXCHANGE_LISTING.md](docs/FILE_EXCHANGE_LISTING.md).
-
 ## License and attribution
 
-Code is released under the Apache License 2.0. See [LICENSE](LICENSE). Cite the [Data Center Cooling Research Tools](https://github.com/UARK-NED3/Data-Center-Cooling-Research-Tools) hub for the research context; this Explorer does not reproduce its third-party datasets.
+Code is released under the Apache License 2.0. See [LICENSE](LICENSE). The Explorer is an educational companion to the [Data Center Cooling Research Tools](https://github.com/UARK-NED3/Data-Center-Cooling-Research-Tools) hub; cite the hub for the research context. This repository does not reproduce the hub's third-party datasets.
 
 ## Project status
 
-Version `0.2.0` is the current public development release. Its heat-balance calculations and MATLAB interface have been tested on MATLAB R2025b. The project has not been independently validated against measured rack data.
+Version `0.3.0` is the current development version. Its calculations, app, and live script pass the automated tests listed above. The project has not been validated against measured rack data.
