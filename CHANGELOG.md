@@ -2,12 +2,6 @@
 
 All notable changes are documented here.
 
-## [Unreleased]
-
-### Fixed
-
-- The Explorer now fits its default window within small displays instead of selecting the full preferred size when the screen is below 800 by 600 pixels.
-
 ## [0.3.0] - 2026-10-06
 
 ### Fixed
@@ -15,6 +9,7 @@ All notable changes are documented here.
 - The component temperature now comes from a wall-coupled (effectiveness–NTU) model. Earlier versions referenced the thermal resistance to the supply temperature, which made the component temperature independent of coolant flow and let the coolant return exceed the component temperature at low flow (72.8 °C return from a 49.0 °C component in the v0.2.0 flow-limited scenario).
 - The flow-limited scenario now changes only the coolant flow; v0.2.0 also doubled the IT load, which confounded the comparison.
 - The transient legend no longer lists the load-step reference line as `data1`.
+- The Explorer now fits its default window within small displays instead of selecting the full preferred size when the screen is below 800 by 600 pixels.
 
 ### Added
 
