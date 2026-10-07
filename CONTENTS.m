@@ -8,6 +8,7 @@
 %   src/calculateWallCoupling      - Effectiveness-NTU coupling between component and coolant.
 %   src/simulateComponentTransient - Exact one-node transient component model.
 %   src/getExplorerPreset          - Synthetic teaching scenarios and prediction questions.
+%   src/calculateFigurePosition    - Display-aware position for the Explorer window.
 %   scripts/renderPreview          - Regenerate the README and listing images.
 %   tests/runTests                 - Run the automated verification tests.
 %

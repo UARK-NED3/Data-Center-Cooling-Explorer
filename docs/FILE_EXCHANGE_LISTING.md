@@ -41,7 +41,7 @@ Engineering
 
 ## Verification statement
 
-Version 0.3.0 passed 24 automated tests in MATLAB R2025b and R2023a. The tests check the heat balance and limiting cases, the second-law bound across a parameter grid, the effectiveness–NTU limits, the exact transient solution against an independent `ode45` integration and an integrated energy balance, agreement between every prediction answer and the model, the app's prediction and live-update paths, and an end-to-end run of the live script. The tests also passed in R2025b from a clean `git archive` extraction of the committed source with the default MATLAB path restored.
+Version 0.3.0 passed 25 automated tests in MATLAB R2025b and R2023a. The tests check the heat balance and limiting cases, the second-law bound across a parameter grid, the effectiveness–NTU limits, the exact transient solution against an independent `ode45` integration and an integrated energy balance, agreement between every prediction answer and the model, the app's prediction and live-update paths, an end-to-end run of the live script, and window placement on a small display. The tests also passed in R2025b from a clean `git archive` extraction of the committed source with the default MATLAB path restored.
 
 ## Project links
 

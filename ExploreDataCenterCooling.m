@@ -177,7 +177,7 @@ title('Response to a step from 40% to 100% of the IT load');
 %[text] - **Flow-limited loop:** only the coolant flow changes.
 %[text] - **Lower thermal resistance:** only the component-to-coolant resistance changes.
 %[text] - **High-density stress test:** a demanding case that separates heat fractions from absolute heat rates. \
-app = DataCenterCoolingExplorer('Visible', explorerVisible); %#ok<NASGU>
+app = DataCenterCoolingExplorer('Visible', explorerVisible);
 %%
 %[text] ## 7. Transfer question
 %[text] The Explorer's model satisfies both the energy balance and the second law, yet it is still not validated for any real rack. List the measurements and metadata you would need before comparing it with a physical system. Consider:
