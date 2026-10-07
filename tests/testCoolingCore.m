@@ -329,6 +329,12 @@ verifyLessThanOrEqual(testCase, position(2) + position(4), 480);
 verifyEqual(testCase, calculateFigurePosition([0 0 1920 1080]), [240 100 1440 880]);
 end
 
+function testFigurePositionIgnoresUnreportedDisplay(testCase)
+% A degenerate ScreenSize such as [1 1 1 1] must not shrink the window to 1 by 1 px.
+verifyEqual(testCase, calculateFigurePosition([1 1 1 1]), [1 1 1440 880]);
+verifyEqual(testCase, calculateFigurePosition([1 1 300 200], [800 600]), [1 1 800 600]);
+end
+
 %% Helpers
 function input = steadyInput(itLoad_W, liquidCaptureFraction, coolantMassFlow_kg_s, supplyTemperature_C)
 input = struct( ...
