@@ -1,0 +1,38 @@
+name: MATLAB tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: MATLAB R2025b
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Start virtual display for UI tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes xvfb
+          Xvfb :99 -screen 0 1440x900x24 &
+          echo "DISPLAY=:99" >> "$GITHUB_ENV"
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v3
+        with:
+          release: R2025b
+
+      - name: Run package tests
+        uses: matlab-actions/run-command@v3
+        with:
+          command: "addpath('tests'); results = runTests; assert(all([results.Passed]));"
