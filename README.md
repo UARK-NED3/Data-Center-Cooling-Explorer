@@ -21,6 +21,17 @@ DataCenterCoolingExplorer       % or launch the interactive app directly
 
 Only base MATLAB is required; Simscape and other toolboxes are not used. The automated tests pass in MATLAB R2025b and R2023a. The guided lesson is saved in the plain-text live-script format introduced in R2025a, so it opens with formatted text, equations, and an embedded slider in R2025a or later, including MATLAB Online. Earlier releases read the same file as an ordinary script whose narrative markup is comments; the R2023a test run executes it end to end.
 
+## Learning objectives
+
+After the guided lesson and Explorer activity, learners should be able to:
+
+1. Use $Q_{\mathrm{liquid}}=\dot{m}c_p(T_{\mathrm{return}}-T_{\mathrm{supply}})$ to explain why lower coolant flow raises the coolant temperature rise for the same liquid heat load.
+2. Explain why an energy balance alone does not guarantee a physically possible component-to-coolant temperature relationship.
+3. Use the wall-coupled model to predict how coolant flow and component-to-coolant resistance affect component and return temperatures.
+4. Read the thermal time constant from the transient plot and relate it to the effective thermal resistance and component thermal capacitance.
+
+For a suggested 15–20 minute classroom sequence, targeted misconceptions, and a transfer question, see the [instructor guide](docs/INSTRUCTOR_GUIDE.md).
+
 ## What learners do
 
 ### Guided live script: `ExploreDataCenterCooling.m`
@@ -133,4 +144,8 @@ Code is released under the Apache License 2.0. See [LICENSE](LICENSE). The Explo
 
 ## Project status
 
-Version `0.3.0` is the current development version. Its calculations, app, and live script pass the automated tests listed above. The project has not been validated against measured rack data.
+Version `0.3.1` is the current release. Its calculations, app, and live script pass the automated tests listed above. The project has not been validated against measured rack data.
+
+## Contributing
+
+Contributions that improve teaching clarity, MATLAB compatibility, accessibility, or traceable verification are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening an issue or pull request.
