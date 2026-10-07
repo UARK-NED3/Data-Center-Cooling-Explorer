@@ -106,7 +106,7 @@ addpath('tests')
 runTests
 ```
 
-The 24 tests check:
+The 25 tests check:
 
 - the steady heat partition, coolant temperature rise, inverse flow relation, zero-capture limit, and invalid-input rejection;
 - that the return temperature stays below the component temperature across a grid of loads, flows, and resistances, including the former v0.2.0 flow-limited case;
@@ -114,6 +114,7 @@ The 24 tests check:
 - the exact transient solution against an independent `ode45` integration, the integrated energy balance, and the 63% rise after one time constant;
 - that the controlled scenarios change exactly one input and that every prediction answer agrees with the model; and
 - the app (launch, live slider updates, the prediction gate, feedback on an incorrect prediction, the caution and boiling cues, and legend contents) and an end-to-end run of the live script.
+- that the default Explorer window stays within a small reported display.
 
 These tests verify the code against its own governing equations. They do not validate the model against measured rack data.
 

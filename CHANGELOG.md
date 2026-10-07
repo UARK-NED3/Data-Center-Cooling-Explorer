@@ -2,6 +2,12 @@
 
 All notable changes are documented here.
 
+## [Unreleased]
+
+### Fixed
+
+- The Explorer now fits its default window within small displays instead of selecting the full preferred size when the screen is below 800 by 600 pixels.
+
 ## [0.3.0] - 2026-10-06
 
 ### Fixed

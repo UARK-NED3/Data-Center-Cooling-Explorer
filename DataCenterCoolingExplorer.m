@@ -51,7 +51,7 @@ lastState = struct();
 
 position = parser.Results.Position;
 if isempty(position)
-    position = defaultFigurePosition();
+    position = calculateFigurePosition(get(groot, 'ScreenSize'));
 end
 figureHandle = uifigure( ...
     'Name', 'Data Center Cooling Explorer', ...
@@ -703,17 +703,4 @@ end
 
 function text = formatQuantity(value, prediction)
 text = sprintf('%.1f %s', value * prediction.displayScale, prediction.displayUnit);
-end
-
-function position = defaultFigurePosition()
-preferred = [1440 880];
-screen = get(groot, 'ScreenSize');
-if screen(3) < 800 || screen(4) < 600
-    figureSize = preferred;
-else
-    figureSize = min(preferred, [screen(3) - 40, screen(4) - 90]);
-end
-left = max(10, round((screen(3) - figureSize(1)) / 2));
-bottom = max(40, round((screen(4) - figureSize(2)) / 2));
-position = [left bottom figureSize];
 end

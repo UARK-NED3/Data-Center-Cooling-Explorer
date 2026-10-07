@@ -317,6 +317,18 @@ verifyGreaterThan(testCase, lowState.componentTemperature_C, baseState.component
 verifyTrue(testCase, any(violates), 'The shortcut model should violate the second law at low flow.');
 end
 
+%% Layout
+function testFigurePositionFitsSmallDisplays(testCase)
+position = calculateFigurePosition([0 0 640 480]);
+
+verifyGreaterThanOrEqual(testCase, position(1), 10);
+verifyGreaterThanOrEqual(testCase, position(2), 10);
+verifyLessThanOrEqual(testCase, position(1) + position(3), 640);
+verifyLessThanOrEqual(testCase, position(2) + position(4), 480);
+
+verifyEqual(testCase, calculateFigurePosition([0 0 1920 1080]), [240 100 1440 880]);
+end
+
 %% Helpers
 function input = steadyInput(itLoad_W, liquidCaptureFraction, coolantMassFlow_kg_s, supplyTemperature_C)
 input = struct( ...
