@@ -10,6 +10,7 @@
 %   src/getExplorerPreset          - Synthetic teaching scenarios and prediction questions.
 %   src/calculateFigurePosition    - Display-aware position for the Explorer window.
 %   scripts/renderPreview          - Regenerate the README and listing images.
+%   scripts/renderDemoAnimation    - Regenerate the animated README demo.
 %   tests/runTests                 - Run the automated verification tests.
 %
 % The models are educational and assumption-driven. They are not calibrated
