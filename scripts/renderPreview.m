@@ -1,4 +1,7 @@
 %RENDERPREVIEW Regenerate the README and listing previews from the interactive MATLAB app.
-% This script writes images derived only from synthetic model inputs.
+% This script writes the four still images and the animated demo in docs/,
+% all derived only from synthetic model inputs.
 
-run(fullfile(fileparts(mfilename('fullpath')), 'renderContestPreviews.m'));
+scriptFolder = fileparts(mfilename('fullpath'));
+run(fullfile(scriptFolder, 'renderContestPreviews.m'));
+run(fullfile(scriptFolder, 'renderDemoAnimation.m'));

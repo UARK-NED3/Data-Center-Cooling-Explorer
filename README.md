@@ -3,9 +3,9 @@
 [![MATLAB tests](https://github.com/UARK-NED3/Data-Center-Cooling-Explorer/actions/workflows/matlab-tests.yml/badge.svg)](https://github.com/UARK-NED3/Data-Center-Cooling-Explorer/actions/workflows/matlab-tests.yml)
 [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=UARK-NED3/Data-Center-Cooling-Explorer&file=ExploreDataCenterCooling.m)
 
-Every watt of IT power becomes heat. In a liquid-cooled rack, that heat must cross from a component into a coolant stream and leave the rack with it. This MATLAB live script and app teach what sets the coolant and component temperatures: the steady energy balance, the second law, the thermal resistance between the component and the coolant, and the component's thermal storage. Learners predict how an output will change before each scenario loads, then compare the prediction with the model.
+Every watt of IT power becomes heat. In a liquid-cooled rack, that heat must cross from a component into a coolant stream and leave the rack with it. This MATLAB live script and app teach what sets the coolant and component temperatures: the steady energy balance, the second law, the thermal resistance between the component and the coolant, and the component's thermal storage. Learners predict how an output will change before each scenario loads, then compare the prediction with the model. The central example is a model that accounts for every watt yet predicts coolant leaving hotter than the component that heats it.
 
-![Data Center Cooling Explorer after a learner predicts the flow-limited case](docs/flow-limited-loop-preview.png)
+![A learner predicts the flow-limited case, reads the Explorer's explanation, and then drags the coolant-flow slider](docs/explorer-demo.gif)
 
 > **Scope.** All inputs are synthetic, declared assumptions chosen for teaching. The model is a one-node lesson, not a calibrated rack, cold-plate, CDU, pump, or facility model, and the repository contains no licensed inventory records, operational telemetry, or vendor data.
 
@@ -107,21 +107,21 @@ addpath('tests')
 runTests
 ```
 
-The 25 tests check:
+The 26 tests check:
 
 - the steady heat partition, coolant temperature rise, inverse flow relation, zero-capture limit, and invalid-input rejection;
 - that the return temperature stays below the component temperature across a grid of loads, flows, and resistances, including the former v0.2.0 flow-limited case;
 - the effectiveness–NTU relation, its high-flow and negligible-resistance limits, the monotonic fall of component temperature with flow, and the unchanged return temperature when only the resistance changes;
 - the exact transient solution against an independent `ode45` integration, the integrated energy balance, and the 63% rise after one time constant;
-- that the controlled scenarios change exactly one input and that every prediction answer agrees with the model; and
-- the app (launch, live slider updates, the prediction gate, feedback on an incorrect prediction, the caution and boiling cues, and legend contents) and an end-to-end run of the live script.
-- that the default Explorer window stays within a small reported display.
+- that the controlled scenarios change exactly one input and that every prediction answer agrees with the model;
+- the app (launch, live slider updates, the prediction gate, feedback on an incorrect prediction, the caution and boiling cues, and legend contents) and an end-to-end run of the live script; and
+- that the default Explorer window stays within a small reported display and keeps its preferred size when the reported display is degenerate.
 
 These tests verify the code against its own governing equations. They do not validate the model against measured rack data.
 
 ## Reproducible previews
 
-To regenerate the four images in `docs/` from the current code:
+To regenerate the four still images and the animated demo in `docs/` from the current code:
 
 ```matlab
 run('scripts/renderPreview.m')

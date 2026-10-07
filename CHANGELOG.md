@@ -2,6 +2,21 @@
 
 All notable changes are documented here.
 
+## [Unreleased]
+
+### Added
+
+- An animated demo (`docs/explorer-demo.gif`) at the top of the README, generated from the app by `scripts/renderDemoAnimation.m`, which `scripts/renderPreview.m` now also runs.
+
+### Changed
+
+- The File Exchange listing copy now opens with the lesson's central counterexample, a model that closes its energy balance yet predicts coolant hotter than the component, and the README introduction names it.
+
+### Fixed
+
+- A reported screen smaller than 320 by 240 px, such as the degenerate `[1 1 1 1]`, no longer shrinks the Explorer to a 1 by 1 px window; the preferred size is used instead.
+- Corrected the list punctuation in the README verification section.
+
 ## [0.3.0] - 2026-10-06
 
 ### Fixed
