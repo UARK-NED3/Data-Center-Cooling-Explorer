@@ -9,6 +9,9 @@ Every watt of IT power becomes heat. In a liquid-cooled rack, that heat must cro
 
 > **Scope.** All inputs are synthetic, declared assumptions chosen for teaching. The model is a one-node lesson, not a calibrated rack, cold-plate, CDU, pump, or facility model, and the repository contains no licensed inventory records, operational telemetry, or vendor data.
 
+Repository scope, evidence, and reuse boundaries are also available in the
+[NED3 resource manifest](.ned3/resource-manifest-v0.1.json).
+
 ## Quick start
 
 Click **Open in MATLAB Online** above, or clone the repository and run:
